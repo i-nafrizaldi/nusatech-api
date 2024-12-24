@@ -7,9 +7,7 @@ import express, {
   Response,
   urlencoded,
 } from "express";
-import { AuthRouter } from "./routers/auth.router";
 import { ProductRouter } from "./routers/product.router";
-import { UserRouter } from "./routers/user.router";
 import { appConfig } from "./utils/config";
 
 export default class App {
@@ -53,16 +51,12 @@ export default class App {
   }
 
   private routes(): void {
-    const authRouter = new AuthRouter();
-    const userRouter = new UserRouter();
     const productRouter = new ProductRouter();
 
     this.app.get("/api", (req: Request, res: Response) => {
       res.send(`Hello, Welcome to Laptop API !`);
     });
 
-    this.app.use("/api/auth", authRouter.getRouter());
-    this.app.use("/api/users", userRouter.getRouter());
     this.app.use("/api/products", productRouter.getRouter());
   }
 

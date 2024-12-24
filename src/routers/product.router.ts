@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { ProductController } from "../controllers/product.controller";
-import { verifyToken } from "../lib/jwt";
-import { uploader } from "../lib/uploader";
+import { validatePrice } from "../middlewares/ValidatePrice";
 
 export class ProductRouter {
   private productController: ProductController;
@@ -14,33 +13,19 @@ export class ProductRouter {
   }
 
   private initializeRouters(): void {
-    this.router.get(
-      "/",
-      verifyToken,
-      this.productController.getProductsController
-    );
-    this.router.get(
-      "/:id",
-      verifyToken,
-      this.productController.getProductController
-    );
+    this.router.get("/", this.productController.getProductsController);
     this.router.post(
       "/",
-      verifyToken,
-      uploader().array("thumbnail", 1),
+      validatePrice,
       this.productController.createProductController
     );
+    this.router.get("/:id", this.productController.getProductController);
     this.router.patch(
       "/:id",
-      verifyToken,
-      uploader().array("thumbnail", 1),
+      validatePrice,
       this.productController.updateProductController
     );
-    this.router.delete(
-      "/:id",
-      verifyToken,
-      this.productController.deleteProductController
-    );
+    this.router.delete("/:id", this.productController.deleteProductController);
   }
 
   getRouter(): Router {

@@ -1,42 +1,13 @@
-import prisma from "../../prisma";
 import { Prisma } from "@prisma/client";
-import { PaginationQueryParams } from "../../types/pagination.type";
+import prisma from "../../prisma";
 
-interface GetProductQuery extends PaginationQueryParams {
-  search: string;
-  userId?: number;
-}
-
-export const getProductsService = async (query: GetProductQuery) => {
+export const getProductsService = async () => {
   try {
-    const { page, search, sortBy, sortOrder, take, userId } = query;
-
-    const whereClause: Prisma.ProductWhereInput = {
-      name: { contains: search },
-      deletedAt: null,
-    };
-
-    if (userId) {
-      whereClause.userId = userId;
-    }
-
-    const product = await prisma.product.findMany({
-      where: whereClause,
-      take: take,
-      skip: (page - 1) * take,
-      orderBy: {
-        [sortBy]: sortOrder,
-      },
-      include: { user: true },
-    });
-
-    const count = await prisma.product.count({
-      where: whereClause,
-    });
+    const products = await prisma.product.findMany();
 
     return {
-      data: product,
-      meta: { page, take, total: count },
+      message: "Create Products Success !",
+      data: products,
     };
   } catch (error) {
     throw error;

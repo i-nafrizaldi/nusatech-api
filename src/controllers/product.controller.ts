@@ -13,13 +13,7 @@ export class ProductController {
     next: NextFunction
   ) {
     try {
-      const files = req.files as Express.Multer.File[];
-      const userId = res.locals.user.id;
-
-      if (!files?.length) {
-        throw new Error("No File Uploaded");
-      }
-      const result = await createProductService(userId, req.body, files[0]);
+      const result = await createProductService(req.body);
 
       return res.status(201).send(result);
     } catch (error) {
@@ -30,16 +24,7 @@ export class ProductController {
   //get product list
   async getProductsController(req: Request, res: Response, next: NextFunction) {
     try {
-      const query = {
-        take: parseInt(req.query.take as string) || 10,
-        page: parseInt(req.query.page as string) || 1,
-        sortBy: (req.query.sortBy as string) || "createdAt",
-        sortOrder: (req.query.sortOrder as string) || "desc",
-        search: req.query.search as string,
-        userId: parseInt(req.query.userId as string) || 0,
-      };
-
-      const result = await getProductsService(query);
+      const result = await getProductsService();
 
       return res.status(200).send(result);
     } catch (error) {
@@ -67,8 +52,7 @@ export class ProductController {
   ) {
     try {
       const id = req.params.id;
-      const files = req.files as Express.Multer.File[];
-      const result = await updateProductService(Number(id), req.body, files[0]);
+      const result = await updateProductService(Number(id), req.body);
 
       return res.status(200).send(result);
     } catch (error) {
